@@ -770,35 +770,35 @@ utterance.pitch = MIN_PITCH + (settings.voicePitch / 100) * (MAX_PITCH - MIN_PIT
 
 ### Immediate Actions (This Week)
 
-1. ✅ Fix critical bugs (#1-4)
-2. ✅ Add environment variable validation
-3. ✅ Fix speech recognition memory leak
-4. ✅ Add input length validation
-5. ✅ Resolve npm vulnerabilities (`npm audit fix`)
+1. [ ] Fix critical bugs (#1-4)
+2. [ ] Add environment variable validation
+3. [ ] Fix speech recognition memory leak
+4. [ ] Add input length validation
+5. [ ] Resolve npm vulnerabilities (`npm audit fix`)
 
 ### Short-term (Next 2 Weeks)
 
-1. ✅ Extract SETH.jsx into custom hooks
-2. ✅ Add error boundaries
-3. ✅ Implement input validation and rate limiting
-4. ✅ Add JSDoc comments to all functions
-5. ✅ Set up ESLint pre-commit hooks
+1. [ ] Extract SETH.jsx into custom hooks
+2. [ ] Add error boundaries
+3. [ ] Implement input validation and rate limiting
+4. [ ] Add JSDoc comments to all functions
+5. [ ] Set up ESLint pre-commit hooks
 
 ### Medium-term (Next Month)
 
-1. ✅ Set up testing infrastructure (Jest, RTL)
-2. ✅ Write tests for core components
-3. ✅ Implement CI/CD with GitHub Actions
-4. ✅ Add performance monitoring (Web Vitals)
-5. ✅ Optimize bundle size (code splitting)
+1. [ ] Set up testing infrastructure (Jest, RTL)
+2. [ ] Write tests for core components
+3. [ ] Implement CI/CD with GitHub Actions
+4. [ ] Add performance monitoring (Web Vitals)
+5. [ ] Optimize bundle size (code splitting)
 
 ### Long-term (Next Quarter)
 
-1. ✅ Gradual TypeScript migration
-2. ✅ Implement state management library (Zustand)
-3. ✅ Add comprehensive test suite (70%+ coverage)
-4. ✅ Performance optimization (virtual scrolling, memoization)
-5. ✅ Security audit and hardening
+1. [ ] Gradual TypeScript migration
+2. [ ] Implement state management library (Zustand)
+3. [ ] Add comprehensive test suite (70%+ coverage)
+4. [ ] Performance optimization (virtual scrolling, memoization)
+5. [ ] Security audit and hardening
 
 ---
 

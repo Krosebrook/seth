@@ -11,13 +11,54 @@
 
 ### Known Vulnerabilities
 
-As of the latest audit, there are **8 npm package vulnerabilities**:
-- 6 moderate severity
-- 2 high severity
+As of the latest audit (2024-12-30), there are **8 npm package vulnerabilities**:
 
-**Status**: These are primarily in development dependencies and do not affect production runtime security.
+#### High Severity (2)
+1. **jspdf** (v2.5.2)
+   - CVE: GHSA-w532-jxjh-hjhj (ReDoS), GHSA-8mvj-3j78-4qmw (DoS)
+   - Impact: Denial of Service attacks via malicious input
+   - Fix Available: Upgrade to v3.0.4 (breaking change)
+   - Status: Direct dependency, affects PDF export feature
 
-**Action Required**: Run `npm audit fix` to address non-breaking issues.
+2. **glob** (v10.4.5)
+   - CVE: GHSA-5j98-mcp5-4vw2
+   - Impact: Command injection via CLI (does not affect runtime)
+   - Fix Available: Upgrade to v10.5.0+
+   - Status: Development dependency only
+
+#### Moderate Severity (6)
+3. **dompurify** (<3.2.4)
+   - CVE: GHSA-vhxf-7vqr-mrjg
+   - Impact: Cross-site Scripting (XSS)
+   - Fix Available: Via jspdf upgrade to v3.0.4
+   - Status: Transitive dependency through jspdf
+
+4. **js-yaml** (v4.1.0)
+   - CVE: GHSA-mh29-5h37-fv8m
+   - Impact: Prototype pollution in merge operator
+   - Fix Available: Upgrade to v4.1.1+
+   - Status: Development dependency
+
+5. **mdast-util-to-hast** (v13.2.0)
+   - CVE: GHSA-4fh9-h7wg-q85m
+   - Impact: Unsanitized class attribute
+   - Fix Available: Upgrade to v13.2.1+
+   - Status: Transitive dependency through react-markdown
+
+6. **quill** (v1.3.7)
+   - CVE: GHSA-4943-9vgg-gr5r
+   - Impact: Cross-site Scripting
+   - Fix Available: Pending maintainer update
+   - Status: Direct dependency via react-quill
+
+7-8. **Additional moderate issues** in transitive dependencies
+
+**Overall Assessment**: Most vulnerabilities are in development dependencies or non-critical features (PDF export, Markdown rendering). Core chat functionality is not affected.
+
+**Action Required**: 
+- Run `npm audit fix` to address non-breaking issues
+- Evaluate upgrading jspdf to v3.0.4 (breaking change)
+- Monitor quill for security updates
 
 ### Dependency Security
 
