@@ -494,13 +494,15 @@ Before merging code, verify:
 
 ### Process
 
-1. **Do NOT** create a public GitHub issue
-2. **Email**: security@yourproject.com (replace with actual email)
-3. **Include**:
+1. **Do NOT** create a public GitHub issue for security vulnerabilities
+2. **Use GitHub Security Advisories**: Navigate to https://github.com/Krosebrook/seth/security/advisories and click "Report a vulnerability"
+3. **Alternative**: Email the maintainers privately through GitHub or create a draft security advisory
+4. **Include**:
    - Description of vulnerability
    - Steps to reproduce
    - Potential impact
    - Suggested fix (if any)
+   - Your contact information for follow-up
 
 ### Response Timeline
 
@@ -582,9 +584,10 @@ Before merging code, verify:
 
 ## Security Contacts
 
-- **Security Lead**: [Your Name/Team]
-- **Email**: security@yourproject.com
-- **PGP Key**: [Public key for encrypted communication]
+- **Security Lead**: SETH Development Team
+- **Email**: Create a security@yourproject.com or use your GitHub Security Advisories at https://github.com/Krosebrook/seth/security/advisories
+- **GitHub Security**: Report vulnerabilities via https://github.com/Krosebrook/seth/security
+- **PGP Key**: [To be added when security email is established]
 - **Response Time**: 48 hours for initial response
 
 ## Additional Resources

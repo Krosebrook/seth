@@ -58,12 +58,13 @@ We are committed to providing a welcoming and inclusive environment for all cont
 
 ### Fork and Clone
 
-1. Fork the repository on GitHub
+1. Fork the repository on GitHub using the "Fork" button at https://github.com/Krosebrook/seth
 2. Clone your fork locally:
    ```bash
    git clone https://github.com/YOUR_USERNAME/seth.git
    cd seth
    ```
+   Replace `YOUR_USERNAME` with your GitHub username.
 3. Add upstream remote:
    ```bash
    git remote add upstream https://github.com/Krosebrook/seth.git
