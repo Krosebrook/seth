@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import { Learning } from "@/entities/Learning";
 import { ChatSession } from "@/entities/ChatSession";
@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Settings, Mic, Send, Bot, User, Loader2, History, Image as ImageIcon, Film, MessageCircle, Video } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import SettingsPanel from "../components/seth/SettingsPanel";
-import HistoryPanel from "../components/seth/HistoryPanel";
 import ThoughtBubble from "../components/seth/ThoughtBubble";
+
+/**
+ * Lazy-loaded components for code splitting
+ * These panels are only loaded when the user opens them, reducing initial bundle size
+ * Safe change: Components load on-demand, behavior remains identical
+ */
+const SettingsPanel = lazy(() => import("../components/seth/SettingsPanel"));
+const HistoryPanel = lazy(() => import("../components/seth/HistoryPanel"));
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
@@ -524,19 +530,23 @@ Provide your most accurate and comprehensive response:`;
 
             <AnimatePresence>
                 {showSettings && (
-                    <SettingsPanel
-                        settings={settings}
-                        onSettingsChange={setSettings}
-                        onClose={() => setShowSettings(false)}
-                        voices={voices}
-                    />
+                    <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div></div>}>
+                        <SettingsPanel
+                            settings={settings}
+                            onSettingsChange={setSettings}
+                            onClose={() => setShowSettings(false)}
+                            voices={voices}
+                        />
+                    </Suspense>
                 )}
                 {showHistory && (
-                    <HistoryPanel
-                        onNewChat={startNewChat}
-                        onLoadSession={loadChatSession}
-                        onClose={() => setShowHistory(false)}
-                    />
+                    <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div></div>}>
+                        <HistoryPanel
+                            onNewChat={startNewChat}
+                            onLoadSession={loadChatSession}
+                            onClose={() => setShowHistory(false)}
+                        />
+                    </Suspense>
                 )}
             </AnimatePresence>
         </div>
