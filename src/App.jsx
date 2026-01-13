@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -8,10 +9,25 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import ErrorBoundary from '@/lib/ErrorBoundary';
+import RouteErrorBoundary from '@/lib/RouteErrorBoundary';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+
+/**
+ * Loading fallback component for lazy-loaded pages
+ * Shown while the page bundle is being downloaded and parsed
+ */
+const PageLoadingFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-black">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-cyan-400 text-sm">Loading...</p>
+    </div>
+  </div>
+);
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -40,44 +56,55 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
+  // Render the main app with route-level error boundaries for each page
+  // Wrapped with Suspense to handle lazy-loaded page components
+  // This enables code splitting and improves initial load performance
   return (
-    <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
+    <Suspense fallback={<PageLoadingFallback />}>
+      <Routes>
+        <Route path="/" element={
+          <RouteErrorBoundary>
+            <LayoutWrapper currentPageName={mainPageKey}>
+              <MainPage />
             </LayoutWrapper>
-          }
-        />
-      ))}
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+          </RouteErrorBoundary>
+        } />
+        {Object.entries(Pages).map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <RouteErrorBoundary>
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              </RouteErrorBoundary>
+            }
+          />
+        ))}
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 
 
 function App() {
-
+  // Wrapped entire app with ErrorBoundary to catch and handle runtime errors gracefully
+  // This is a safe addition - if no errors occur, the app behaves exactly as before
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-        <VisualEditAgent />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+          <VisualEditAgent />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

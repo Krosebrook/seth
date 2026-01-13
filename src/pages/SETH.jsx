@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import { Learning } from "@/entities/Learning";
 import { ChatSession } from "@/entities/ChatSession";
@@ -6,9 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Settings, Mic, Send, Bot, User, Loader2, History, Image as ImageIcon, Film, MessageCircle, Video } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import SettingsPanel from "../components/seth/SettingsPanel";
-import HistoryPanel from "../components/seth/HistoryPanel";
 import ThoughtBubble from "../components/seth/ThoughtBubble";
+
+/**
+ * Lazy-loaded components for code splitting
+ * These panels are only loaded when the user opens them, reducing initial bundle size
+ * Safe change: Components load on-demand, behavior remains identical
+ */
+const SettingsPanel = lazy(() => import("../components/seth/SettingsPanel"));
+const HistoryPanel = lazy(() => import("../components/seth/HistoryPanel"));
+
+/**
+ * Loading fallback for lazy-loaded panel components
+ * Reusable component to avoid duplication
+ */
+const PanelLoadingFallback = () => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+);
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
@@ -337,7 +353,8 @@ Provide your most accurate and comprehensive response:`;
     };
 
     const saveChatSession = async (msgs, firstMessageText) => {
-        const formattedMsgs = msgs.map(({ thought, ...rest }) => rest).filter(m => m.text || m.imageUrl);
+        // Filter out 'thought' property from messages and keep only messages with text or imageUrl
+        const formattedMsgs = msgs.map(({ thought: _thought, ...rest }) => rest).filter(m => m.text || m.imageUrl);
         try {
             if (currentSessionId) {
                 await ChatSession.update(currentSessionId, { messages: formattedMsgs });
@@ -523,19 +540,23 @@ Provide your most accurate and comprehensive response:`;
 
             <AnimatePresence>
                 {showSettings && (
-                    <SettingsPanel
-                        settings={settings}
-                        onSettingsChange={setSettings}
-                        onClose={() => setShowSettings(false)}
-                        voices={voices}
-                    />
+                    <Suspense fallback={<PanelLoadingFallback />}>
+                        <SettingsPanel
+                            settings={settings}
+                            onSettingsChange={setSettings}
+                            onClose={() => setShowSettings(false)}
+                            voices={voices}
+                        />
+                    </Suspense>
                 )}
                 {showHistory && (
-                    <HistoryPanel
-                        onNewChat={startNewChat}
-                        onLoadSession={loadChatSession}
-                        onClose={() => setShowHistory(false)}
-                    />
+                    <Suspense fallback={<PanelLoadingFallback />}>
+                        <HistoryPanel
+                            onNewChat={startNewChat}
+                            onLoadSession={loadChatSession}
+                            onClose={() => setShowHistory(false)}
+                        />
+                    </Suspense>
                 )}
             </AnimatePresence>
         </div>
