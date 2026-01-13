@@ -16,6 +16,16 @@ import ThoughtBubble from "../components/seth/ThoughtBubble";
 const SettingsPanel = lazy(() => import("../components/seth/SettingsPanel"));
 const HistoryPanel = lazy(() => import("../components/seth/HistoryPanel"));
 
+/**
+ * Loading fallback for lazy-loaded panel components
+ * Reusable component to avoid duplication
+ */
+const PanelLoadingFallback = () => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+);
+
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
@@ -530,7 +540,7 @@ Provide your most accurate and comprehensive response:`;
 
             <AnimatePresence>
                 {showSettings && (
-                    <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div></div>}>
+                    <Suspense fallback={<PanelLoadingFallback />}>
                         <SettingsPanel
                             settings={settings}
                             onSettingsChange={setSettings}
@@ -540,7 +550,7 @@ Provide your most accurate and comprehensive response:`;
                     </Suspense>
                 )}
                 {showHistory && (
-                    <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div></div>}>
+                    <Suspense fallback={<PanelLoadingFallback />}>
                         <HistoryPanel
                             onNewChat={startNewChat}
                             onLoadSession={loadChatSession}

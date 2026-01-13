@@ -6,10 +6,18 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+# Explicitly limit GITHUB_TOKEN permissions for security best practices
+permissions:
+  contents: read
+
 jobs:
   quality-checks:
     name: Quality Checks
     runs-on: ubuntu-latest
+    
+    # Explicit permissions for this job (minimal required)
+    permissions:
+      contents: read
     
     strategy:
       matrix:
@@ -53,6 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: quality-checks
     if: always()
+    
+    # Explicit permissions for this job
+    permissions:
+      contents: read
     
     steps:
       - name: Report status

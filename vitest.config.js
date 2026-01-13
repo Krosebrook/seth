@@ -15,7 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: './src/test/setup.js',
+    setupFiles: ['./src/test/setup.js'], // Array format for easier extension
     // Only run tests in __tests__ directories and files ending in .test.jsx or .test.js
     include: ['src/**/*.{test,spec}.{js,jsx}', 'src/**/__tests__/**/*.{js,jsx}'],
     // Exclude node_modules and build directories
