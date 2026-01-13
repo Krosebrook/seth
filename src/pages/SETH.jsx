@@ -337,7 +337,8 @@ Provide your most accurate and comprehensive response:`;
     };
 
     const saveChatSession = async (msgs, firstMessageText) => {
-        const formattedMsgs = msgs.map(({ thought, ...rest }) => rest).filter(m => m.text || m.imageUrl);
+        // Filter out 'thought' property from messages and keep only messages with text or imageUrl
+        const formattedMsgs = msgs.map(({ thought: _thought, ...rest }) => rest).filter(m => m.text || m.imageUrl);
         try {
             if (currentSessionId) {
                 await ChatSession.update(currentSessionId, { messages: formattedMsgs });
