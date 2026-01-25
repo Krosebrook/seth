@@ -4,9 +4,11 @@ import { Learning } from "@/entities/Learning";
 import { ChatSession } from "@/entities/ChatSession";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Settings, Mic, Send, Bot, User, Loader2, History, Image as ImageIcon, Film, MessageCircle, Video } from "lucide-react";
+import { Settings, Mic, Send, Bot, User, Loader2, History, Image as ImageIcon, Film, MessageCircle, Video, Briefcase, User as UserIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import ThoughtBubble from "../components/seth/ThoughtBubble";
+import Sidebar from "../components/Sidebar";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 /**
  * Lazy-loaded components for code splitting
@@ -44,6 +46,7 @@ export default function SETHPage() {
     const [showSettings, setShowSettings] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const [activeMode, setActiveMode] = useState('chat'); // chat, image, video, storyboard
+    const [mode, setMode] = useState('work'); // work or personal
     const [voices, setVoices] = useState([]);
     const [settings, setSettings] = useState({
         consciousness: 100,
@@ -409,19 +412,38 @@ Provide your most accurate and comprehensive response:`;
     };
 
     return (
-        <div className="flex flex-col h-screen bg-black text-white font-sans">
-            <header className="flex justify-between items-center p-4 border-b border-cyan-500/30">
-                <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" onClick={() => setShowHistory(true)}>
-                        <History className="h-6 w-6 text-cyan-400" />
-                    </Button>
-                    <div className="w-10 h-10 rounded-full bg-cyan-400 transition-all duration-500" style={consciousnessGlow}></div>
-                    <h1 className="text-2xl font-bold tracking-wider text-cyan-300">SETH</h1>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)}>
-                    <Settings className="h-6 w-6 text-cyan-400 hover:animate-spin" />
-                </Button>
-            </header>
+        <div className="flex h-screen bg-black text-white">
+            <Sidebar currentPage="Home" mode={mode} />
+            
+            <div className="flex flex-col flex-1 overflow-hidden">
+                <Breadcrumbs items={[{ label: 'Tessa - Ready to go to work' }]} />
+                
+                <header className="flex justify-between items-center p-4 border-b border-cyan-500/30">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" onClick={() => setShowHistory(true)}>
+                            <History className="h-6 w-6 text-cyan-400" />
+                        </Button>
+                        <div className="w-10 h-10 rounded-full bg-cyan-400 transition-all duration-500" style={consciousnessGlow}></div>
+                        <h1 className="text-2xl font-bold tracking-wider text-cyan-300">Tessa</h1>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setMode(mode === 'work' ? 'personal' : 'work')}
+                            className="border-cyan-500/50"
+                        >
+                            {mode === 'work' ? (
+                                <><Briefcase className="w-4 h-4 mr-2" />Work</>
+                            ) : (
+                                <><UserIcon className="w-4 h-4 mr-2" />Personal</>
+                            )}
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setShowSettings(true)}>
+                            <Settings className="h-6 w-6 text-cyan-400 hover:animate-spin" />
+                        </Button>
+                    </div>
+                </header>
 
             {/* Mode Selection Bar */}
             <div className="flex justify-center gap-2 p-4 border-b border-gray-800">
@@ -467,8 +489,9 @@ Provide your most accurate and comprehensive response:`;
                 {messages.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-full text-cyan-300/50">
                         <div className="w-24 h-24 rounded-full bg-cyan-400/10 mb-4 transition-all duration-500" style={consciousnessGlow}></div>
-                        <p className="text-xl">SETH Enhanced - Ready for {activeMode.toUpperCase()} mode</p>
-                        <p className="text-sm mt-2">Maximum accuracy and precision enabled</p>
+                        <p className="text-xl">Tessa - Ready to go to work</p>
+                        <p className="text-sm mt-2">{activeMode.toUpperCase()} mode | {mode === 'work' ? 'Work Mode' : 'Personal Mode'}</p>
+                        <p className="text-xs mt-1">Maximum accuracy and precision enabled</p>
                     </div>
                 )}
                 <AnimatePresence>
