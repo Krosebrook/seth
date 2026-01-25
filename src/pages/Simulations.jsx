@@ -7,13 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Play, Loader2 } from 'lucide-react';
+import { Plus, Play, Loader2, X, UserPlus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SimulationsPage() {
   const [mode, setMode] = useState('work');
   const [showCreate, setShowCreate] = useState(false);
-  const [newSimulation, setNewSimulation] = useState({ title: '', description: '' });
+  const [newSimulation, setNewSimulation] = useState({ title: '', description: '', roles: [] });
+  const [currentRole, setCurrentRole] = useState({ role_id: '', participant_name: '', stance: '' });
   const [isGenerating, setIsGenerating] = useState(false);
   const queryClient = useQueryClient();
 
@@ -22,12 +25,18 @@ export default function SimulationsPage() {
     queryFn: () => base44.entities.Simulation.list('-created_date')
   });
 
+  const { data: customRoles = [] } = useQuery({
+    queryKey: ['customRoles'],
+    queryFn: () => base44.entities.CustomRole.list()
+  });
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Simulation.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['simulations'] });
       setShowCreate(false);
-      setNewSimulation({ title: '', description: '' });
+      setNewSimulation({ title: '', description: '', roles: [] });
+      setCurrentRole({ role_id: '', participant_name: '', stance: '' });
       base44.entities.ActivityLog.create({
         action: 'created_simulation',
         entity_type: 'Simulation',
@@ -35,6 +44,33 @@ export default function SimulationsPage() {
       });
     }
   });
+
+  const addParticipant = () => {
+    if (currentRole.role_id && currentRole.participant_name) {
+      const selectedRole = customRoles.find(r => r.id === currentRole.role_id);
+      setNewSimulation({
+        ...newSimulation,
+        roles: [
+          ...newSimulation.roles,
+          {
+            role_id: currentRole.role_id,
+            role_name: selectedRole?.name || '',
+            participant_name: currentRole.participant_name,
+            stance: currentRole.stance,
+            key_drivers: []
+          }
+        ]
+      });
+      setCurrentRole({ role_id: '', participant_name: '', stance: '' });
+    }
+  };
+
+  const removeParticipant = (index) => {
+    setNewSimulation({
+      ...newSimulation,
+      roles: newSimulation.roles.filter((_, i) => i !== index)
+    });
+  };
 
   const runSimulation = async (simulation) => {
     setIsGenerating(true);
@@ -48,7 +84,7 @@ export default function SimulationsPage() {
 
 Simulation: ${simulation.title}
 Description: ${simulation.description}
-Roles: ${JSON.stringify(simulation.roles || [])}
+Participants & Roles: ${JSON.stringify(simulation.roles || [])}
 
 Return JSON:`,
         response_json_schema: {
@@ -114,7 +150,7 @@ Return JSON:`,
             <div className="flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-cyan-300">Simulations</h1>
-                <p className="text-gray-400 mt-2">Run scenario simulations with enhanced AI analysis</p>
+                <p className="text-gray-400 mt-2">Run scenario simulations with role assignments</p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -143,6 +179,20 @@ Return JSON:`,
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-cyan-300">{sim.title}</h3>
                         <p className="text-gray-400 mt-2">{sim.description}</p>
+                        
+                        {sim.roles && sim.roles.length > 0 && (
+                          <div className="mt-3">
+                            <h4 className="text-sm font-semibold text-purple-400 mb-2">Participants:</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {sim.roles.map((role, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-purple-500/20">
+                                  {role.participant_name} ({role.role_name})
+                                  {role.stance && ` - ${role.stance}`}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                         
                         {sim.summary && (
                           <div className="mt-4 space-y-3">
@@ -219,7 +269,7 @@ Return JSON:`,
       </div>
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent className="bg-gray-900 text-white border-cyan-500/30">
+        <DialogContent className="bg-gray-900 text-white border-cyan-500/30 max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-cyan-300">Create New Simulation</DialogTitle>
           </DialogHeader>
@@ -236,6 +286,76 @@ Return JSON:`,
               onChange={(e) => setNewSimulation({ ...newSimulation, description: e.target.value })}
               className="bg-gray-800 border-cyan-500/30 min-h-32"
             />
+            
+            <div className="border-t border-cyan-500/30 pt-4">
+              <h4 className="text-sm font-semibold text-cyan-300 mb-3">Assign Roles to Participants</h4>
+              
+              {newSimulation.roles.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {newSimulation.roles.map((role, idx) => (
+                    <div key={idx} className="flex items-center justify-between bg-gray-800/50 p-2 rounded border border-purple-500/30">
+                      <div className="text-sm">
+                        <span className="text-purple-300 font-semibold">{role.participant_name}</span>
+                        <span className="text-gray-500 mx-2">→</span>
+                        <span className="text-cyan-300">{role.role_name}</span>
+                        {role.stance && <span className="text-gray-400 ml-2">({role.stance})</span>}
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => removeParticipant(idx)}
+                        className="h-7 w-7 text-red-400 hover:text-red-300"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2 mb-2">
+                <Select
+                  value={currentRole.role_id}
+                  onValueChange={(value) => {
+                    const selectedRole = customRoles.find(r => r.id === value);
+                    setCurrentRole({ ...currentRole, role_id: value, role_name: selectedRole?.name });
+                  }}
+                >
+                  <SelectTrigger className="bg-gray-800 border-cyan-500/30">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customRoles.map((role) => (
+                      <SelectItem key={role.id} value={role.id}>
+                        {role.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder="Participant name"
+                  value={currentRole.participant_name}
+                  onChange={(e) => setCurrentRole({ ...currentRole, participant_name: e.target.value })}
+                  className="bg-gray-800 border-cyan-500/30"
+                />
+                <Input
+                  placeholder="Stance (optional)"
+                  value={currentRole.stance}
+                  onChange={(e) => setCurrentRole({ ...currentRole, stance: e.target.value })}
+                  className="bg-gray-800 border-cyan-500/30"
+                />
+              </div>
+              <Button
+                onClick={addParticipant}
+                disabled={!currentRole.role_id || !currentRole.participant_name}
+                size="sm"
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add Participant
+              </Button>
+            </div>
+
             <Button
               onClick={() => createMutation.mutate(newSimulation)}
               disabled={!newSimulation.title || !newSimulation.description}
