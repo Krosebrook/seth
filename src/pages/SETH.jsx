@@ -582,6 +582,7 @@ Provide your most accurate and comprehensive response:`;
                     </Suspense>
                 )}
             </AnimatePresence>
+            </div>
         </div>
     );
 }
