@@ -1,19 +1,17 @@
-import { lazy } from 'react';
+import SETH from './pages/SETH';
+import Simulations from './pages/Simulations';
+import CustomRoles from './pages/CustomRoles';
+import ActivityLog from './pages/ActivityLog';
+import Export from './pages/Export';
 import __Layout from './Layout.jsx';
 
-/**
- * Lazy-loaded page imports for code splitting
- * 
- * Using React.lazy() to split the SETH page into a separate bundle.
- * This reduces the initial bundle size and improves app loading performance.
- * 
- * Safe change: React.lazy() is built into React 18 and works seamlessly with Suspense.
- * The app behavior remains identical, just loads more efficiently.
- */
-const SETH = lazy(() => import('./pages/SETH'));
 
 export const PAGES = {
     "SETH": SETH,
+    "Simulations": Simulations,
+    "CustomRoles": CustomRoles,
+    "ActivityLog": ActivityLog,
+    "Export": Export,
 }
 
 export const pagesConfig = {
