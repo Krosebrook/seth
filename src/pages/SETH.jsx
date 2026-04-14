@@ -113,9 +113,11 @@ export default function SETHPage() {
                 setSettings(s => ({ ...s, voice: preferredVoice ? preferredVoice.name : availableVoices[0].name }));
             }
         };
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-        loadVoices();
-        return () => { window.speechSynthesis.onvoiceschanged = null; };
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+            loadVoices();
+        }
+        return () => { if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = null; };
     }, []);
 
     const speak = (text) => {
