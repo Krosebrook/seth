@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ThoughtBubble from "../components/seth/ThoughtBubble";
 import Sidebar from "../components/Sidebar";
 import Breadcrumbs from "../components/Breadcrumbs";
+import InstallButton from "../components/InstallButton";
 
 /**
  * Lazy-loaded components for code splitting
@@ -429,6 +430,7 @@ Provide your most accurate and comprehensive response:`;
                         <h1 className="text-2xl font-bold tracking-wider text-cyan-300">Tessa</h1>
                     </div>
                     <div className="flex items-center gap-2">
+                        <InstallButton />
                         <Button
                             variant="outline"
                             size="sm"

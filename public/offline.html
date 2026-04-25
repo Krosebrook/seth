@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tessa - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .offline-container {
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: #00ffff;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #aaa;
+            margin-bottom: 24px;
+        }
+
+        .offline-tips {
+            text-align: left;
+            background: rgba(0, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .offline-tips h3 {
+            color: #00ffff;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .offline-tips ul {
+            list-style: none;
+            color: #999;
+        }
+
+        .offline-tips li {
+            padding: 4px 0;
+        }
+
+        .offline-tips li:before {
+            content: "• ";
+            color: #00ffff;
+            margin-right: 8px;
+        }
+
+        button {
+            background: #00ffff;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #00dddd;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 30px 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <svg class="offline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="#00ffff"/>
+            <path d="M12 6v6m0 4v2" stroke="#00ffff"/>
+        </svg>
+
+        <h1>You're Offline</h1>
+        <p>Tessa requires an internet connection to function. Please check your network and try again.</p>
+
+        <div class="offline-tips">
+            <h3>What you can try:</h3>
+            <ul>
+                <li>Check your Wi-Fi or mobile connection</li>
+                <li>Refresh the page when online</li>
+                <li>Check if your router is working</li>
+                <li>Try moving closer to your Wi-Fi</li>
+            </ul>
+        </div>
+
+        <button onclick="location.reload()">Try Again</button>
+    </div>
+</body>
+</html>
