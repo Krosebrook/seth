@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ErrorBoundary from '@/lib/ErrorBoundary';
 import RouteErrorBoundary from '@/lib/RouteErrorBoundary';
+import Dashboard from '@/pages/Dashboard';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -69,6 +70,16 @@ const AuthenticatedApp = () => {
             </LayoutWrapper>
           </RouteErrorBoundary>
         } />
+        <Route
+          path="/Dashboard"
+          element={
+            <RouteErrorBoundary>
+              <LayoutWrapper currentPageName="Dashboard">
+                <Dashboard />
+              </LayoutWrapper>
+            </RouteErrorBoundary>
+          }
+        />
         {Object.entries(Pages).map(([path, Page]) => (
           <Route
             key={path}

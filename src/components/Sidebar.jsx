@@ -12,6 +12,7 @@ export default function Sidebar({ currentPage, mode = 'work' }) {
 
   const navigation = [
     { name: 'Home', icon: Home, href: createPageUrl('SETH') },
+    { name: 'Dashboard', icon: Activity, href: createPageUrl('Dashboard') },
     { name: 'Simulations', icon: Activity, href: createPageUrl('Simulations') },
     { name: 'Custom Roles', icon: Users, href: createPageUrl('CustomRoles') },
     { name: 'Activity Log', icon: FileText, href: createPageUrl('ActivityLog') },
