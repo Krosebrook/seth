@@ -18,7 +18,7 @@ export default function Sidebar({ currentPage, mode = 'work' }) {
     { name: 'Activity Log', icon: FileText, href: createPageUrl('ActivityLog') },
     { name: 'Export Data', icon: FileText, href: createPageUrl('Export') },
     { name: 'History', icon: History, href: createPageUrl('SETH') },
-    { name: 'Settings', icon: Settings, href: createPageUrl('SETH') },
+    { name: 'Settings', icon: Settings, href: createPageUrl('Settings') },
   ];
 
   const modeColors = {

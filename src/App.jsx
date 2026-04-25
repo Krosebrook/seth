@@ -12,6 +12,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ErrorBoundary from '@/lib/ErrorBoundary';
 import RouteErrorBoundary from '@/lib/RouteErrorBoundary';
 import Dashboard from '@/pages/Dashboard';
+import Settings from '@/pages/Settings';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -76,6 +77,16 @@ const AuthenticatedApp = () => {
             <RouteErrorBoundary>
               <LayoutWrapper currentPageName="Dashboard">
                 <Dashboard />
+              </LayoutWrapper>
+            </RouteErrorBoundary>
+          }
+        />
+        <Route
+          path="/Settings"
+          element={
+            <RouteErrorBoundary>
+              <LayoutWrapper currentPageName="Settings">
+                <Settings />
               </LayoutWrapper>
             </RouteErrorBoundary>
           }
