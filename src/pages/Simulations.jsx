@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Play, Loader2, X, UserPlus } from 'lucide-react';
+import { Plus, Play, Loader2, X, UserPlus, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,6 +18,7 @@ export default function SimulationsPage() {
   const [newSimulation, setNewSimulation] = useState({ title: '', description: '', roles: [] });
   const [currentRole, setCurrentRole] = useState({ role_id: '', participant_name: '', stance: '' });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: simulations = [], isLoading } = useQuery({
@@ -70,6 +71,31 @@ export default function SimulationsPage() {
       ...newSimulation,
       roles: newSimulation.roles.filter((_, i) => i !== index)
     });
+  };
+
+  const exportSimulation = async (simulation) => {
+    setIsExporting(simulation.id);
+    try {
+      const response = await fetch('/api/functions/exportSimulation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ simulationId: simulation.id, format: 'markdown' })
+      });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `simulation-${simulation.title.replace(/\s+/g, '-').toLowerCase()}.md`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+    } finally {
+      setIsExporting(null);
+    }
   };
 
   const runSimulation = async (simulation) => {
@@ -245,20 +271,37 @@ Return JSON:`,
                         )}
                       </div>
                       
-                      <Button
-                        onClick={() => runSimulation(sim)}
-                        disabled={isGenerating}
-                        className="bg-cyan-600 ml-4"
-                      >
-                        {isGenerating ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Play className="w-4 h-4 mr-2" />
-                            Run
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          onClick={() => exportSimulation(sim)}
+                          disabled={isExporting === sim.id}
+                          variant="outline"
+                          className="border-cyan-500/50"
+                        >
+                          {isExporting === sim.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Download className="w-4 h-4 mr-2" />
+                              Export
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          onClick={() => runSimulation(sim)}
+                          disabled={isGenerating}
+                          className="bg-cyan-600"
+                        >
+                          {isGenerating ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Play className="w-4 h-4 mr-2" />
+                              Run
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </Card>
                 ))}
